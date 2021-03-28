@@ -9,10 +9,16 @@ type SquareProps = {
   handleClick: (id: number, value: string) => void
 }
 
+//component
 const Square: React.FC<SquareProps> = (props: SquareProps) => {
   const [stateValue, setValue] = useState<string>('')
 
-  const clickHandler = () => {
+  /**
+   * pointer function for updating state and calling 'handleClick'
+   * from Board component, passing clicked square's id and X or O value
+   * to track move history and rendering
+   */
+  function clickHandler() {
     const currValue = props.currTurn
     setValue(currValue)
     props.handleClick(props.id, currValue)
@@ -23,11 +29,7 @@ const Square: React.FC<SquareProps> = (props: SquareProps) => {
   })
 
   return (
-    <button
-      className="square"
-      onClick={clickHandler}
-      // disabled={props.disabled}
-    >
+    <button className="square" onClick={clickHandler} disabled={props.disabled}>
       {stateValue}
     </button>
   )

@@ -4,12 +4,14 @@ import lines from './winning-conditions'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
 
+//Board props
 type BoardType = {
   squares: string[][]
   updateHistory: (squares: string[]) => void
   currTurn: string
 }
 
+//component
 const Board: React.FC<BoardType> = (props: BoardType) => {
   const [boardState, setBoardState] = useState<string[]>(props.squares[0])
   const [isWinner, setIsWinner] = useState<boolean>(false)
@@ -42,7 +44,7 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
           id={index}
           currTurn={props.currTurn}
           value={props.squares[props.squares.length - 1][index]}
-          //disabled={boardState[index] ? true : false}
+          disabled={boardState[index] ? true : false}
           handleClick={handleClick}
         />
       )

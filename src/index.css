@@ -24,10 +24,6 @@ code {
     monospace;
 }
 
-button:disabled {
-  color: black;
-}
-
 .title {
   text-align: center;
 }
@@ -50,6 +46,18 @@ button:disabled {
   display: flex;
   justify-content: center;
   margin-bottom: 1rem;
+}
+
+.reset button {
+  background: rgba(0, 0, 0, 0);
+  border: none;
+  color: #f5f5f5;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.reset button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .board {
@@ -95,7 +103,7 @@ button:disabled {
 }
 
 .confetti-container div {
-  /* override inline style set by react*/
+  /* override inline style set by react-confetti*/
   position: fixed !important;
   left: 50%;
 }

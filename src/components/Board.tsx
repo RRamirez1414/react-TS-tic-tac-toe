@@ -38,12 +38,12 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
           key={index}
           id={index}
           currTurn={props.currTurn}
-          disabled={boardState[index] ? true : false}
+          value={props.squares[props.squares.length - 1][index]}
+          //disabled={boardState[index] ? true : false}
           handleClick={handleClick}
         />
       )
     })
-
     return squareComponents
   }
   /**
@@ -70,6 +70,9 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
     if (winner) {
       elem.innerHTML = 'Winner! ' + winner
     }
+
+    //reset board state to the last set of history sets
+    setBoardState(props.squares[props.squares.length - 1])
   })
 
   return (

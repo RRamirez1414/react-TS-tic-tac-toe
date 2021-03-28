@@ -56,3 +56,9 @@ button:disabled {
 .square:focus {
   outline: none;
 }
+
+.history-set {
+  list-style-type: none;
+  text-align: center;
+  padding: 0;
+}

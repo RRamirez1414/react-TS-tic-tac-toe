@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react'
 type SquareProps = {
   id: number
   currTurn: string
-  disabled: boolean
+  value: string
+  //disabled: boolean
   handleClick: (id: number, value: string) => void
 }
 
@@ -17,8 +18,16 @@ const Square: React.FC<SquareProps> = (props: SquareProps) => {
     props.handleClick(props.id, currValue)
   }
 
+  useEffect(() => {
+    setValue(props.value)
+  })
+
   return (
-    <button className="square" onClick={clickHandler} disabled={props.disabled}>
+    <button
+      className="square"
+      onClick={clickHandler}
+      // disabled={props.disabled}
+    >
       {stateValue}
     </button>
   )

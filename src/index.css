@@ -43,8 +43,13 @@ button:disabled {
 }
 
 .slider input {
-  color: rgba(255, 255, 255, 0.3);
   width: 30%;
+}
+
+.reset {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
 }
 
 .board {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Square from './Square'
 import lines from './winning-conditions'
 import Confetti from 'react-dom-confetti'
+import confettiConfig from './confetti-config'
 
 type BoardType = {
   squares: string[][]
@@ -70,7 +71,7 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
     const elem = document.querySelector('.status') as HTMLElement
 
     if (winner) {
-      elem.innerHTML = 'Winner! ' + winner
+      elem.innerHTML = '<h2>Winner! ' + winner + '</h2>'
       setIsWinner(true)
     }
 
@@ -79,15 +80,27 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
   })
 
   return (
-    <div className="board">
-      <div className="container">
-        <div className="board-grid">
-          {createSquares(props.squares[props.squares.length - 1])}
-          {/**TODO: attach confetti to winner title */}
-        </div>
+    <div>
+      <div className="reset">
+        <button
+          hidden={!isWinner ? true : false}
+          disabled={!isWinner}
+          onClick={(): void => {
+            window.location.reload()
+          }}
+        >
+          Restart?
+        </button>
       </div>
       <div className="confetti-container">
-        <Confetti active={isWinner} />
+        <Confetti active={isWinner} config={confettiConfig} />
+      </div>
+      <div className="board">
+        <div className="container">
+          <div className="board-grid">
+            {createSquares(props.squares[props.squares.length - 1])}
+          </div>
+        </div>
       </div>
     </div>
   )

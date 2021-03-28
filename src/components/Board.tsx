@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Square from './Square'
 import lines from './winning-conditions'
+import Confetti from 'react-dom-confetti'
 
 type BoardType = {
   squares: string[][]
@@ -10,6 +11,7 @@ type BoardType = {
 
 const Board: React.FC<BoardType> = (props: BoardType) => {
   const [boardState, setBoardState] = useState<string[]>(props.squares[0])
+  const [isWinner, setIsWinner] = useState<boolean>(false)
 
   /**
    * Handles updating the sate of the board string array
@@ -69,6 +71,7 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
 
     if (winner) {
       elem.innerHTML = 'Winner! ' + winner
+      setIsWinner(true)
     }
 
     //reset board state to the last set of history sets
@@ -80,6 +83,8 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
       <div className="container">
         <div className="board-grid">
           {createSquares(props.squares[props.squares.length - 1])}
+          {/**TODO: attach confetti to winner title */}
+          <Confetti active={isWinner} />
         </div>
       </div>
     </div>

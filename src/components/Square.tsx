@@ -5,7 +5,7 @@ type SquareProps = {
   id: number
   currTurn: string
   value: string
-  //disabled: boolean
+  disabled?: boolean
   handleClick: (id: number, value: string) => void
 }
 

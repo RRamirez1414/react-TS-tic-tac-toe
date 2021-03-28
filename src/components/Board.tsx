@@ -84,8 +84,10 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
         <div className="board-grid">
           {createSquares(props.squares[props.squares.length - 1])}
           {/**TODO: attach confetti to winner title */}
-          <Confetti active={isWinner} />
         </div>
+      </div>
+      <div className="confetti-container">
+        <Confetti active={isWinner} />
       </div>
     </div>
   )

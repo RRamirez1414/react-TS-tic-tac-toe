@@ -39,6 +39,12 @@ button:disabled {
 
 .slider {
   text-align: center;
+  margin-bottom: 2rem;
+}
+
+.slider input {
+  color: rgba(255, 255, 255, 0.3);
+  width: 30%;
 }
 
 .board {
@@ -76,4 +82,15 @@ button:disabled {
 
 .square:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+
+.confetti-container {
+  display: block;
+  margin: 0 auto 0 auto;
+}
+
+.confetti-container div {
+  /* override inline style set by react*/
+  position: fixed !important;
+  left: 50%;
 }

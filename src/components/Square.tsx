@@ -29,7 +29,12 @@ const Square: React.FC<SquareProps> = (props: SquareProps) => {
   })
 
   return (
-    <button className="square" onClick={clickHandler} disabled={props.disabled}>
+    <button
+      id={props.id.toString()}
+      className="square"
+      onClick={clickHandler}
+      disabled={props.disabled}
+    >
       {stateValue}
     </button>
   )

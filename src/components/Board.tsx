@@ -59,6 +59,11 @@ const Board: React.FC<BoardType> = (props: BoardType) => {
     for (let i = 0; i < lines.length; i++) {
       const [a, b, c] = lines[i]
       if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+        //highlight winning squares
+        document.getElementById(a.toString())?.classList.add('highlight')
+        document.getElementById(b.toString())?.classList.add('highlight')
+        document.getElementById(c.toString())?.classList.add('highlight')
+
         //return the value of a square itself to determine a winner
         return board[a]
       }

@@ -12,7 +12,15 @@ const Board = ({
 }: BoardTypeProps) => {
   const [gameState, setGameState] = useState<GameState>(gameHistory[0])
   const [isWinner, setIsWinner] = useState<boolean>(false)
+  const [winningSquares, setWinningSquares] = useState<number[]>([])
 
+  /**
+   *
+   * @param gameState
+   * @param squareIndex
+   * @param newValue
+   * @returns
+   */
   const updateBoardState = (
     gameState: GameState,
     squareIndex: number,
@@ -34,26 +42,17 @@ const Board = ({
    */
   const onSquareClick = (id: number, value: string) => {
     const newGameState = updateBoardState(gameState, id, value)
+    const possibleWinningSquares = checkWinner(newGameState)
+
     setGameState(newGameState)
     addGameHistory(newGameState)
-  }
 
-  /**
-   * Check for a winner on each click
-   * @param a
-   */
-  const checkWinner = (board: string[]) => {
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i]
-      if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-        //highlight winning squares
-        document.getElementById(a.toString())?.classList.add('highlight')
-        document.getElementById(b.toString())?.classList.add('highlight')
-        document.getElementById(c.toString())?.classList.add('highlight')
-
-        //return the value of a square itself to determine a winner
-        return board[a]
-      }
+    if (possibleWinningSquares) {
+      setWinningSquares(possibleWinningSquares)
+      setIsWinner(true)
+    } else {
+      setWinningSquares([])
+      setIsWinner(false)
     }
   }
 
@@ -61,20 +60,15 @@ const Board = ({
    * handle checking for winner after each board re-render
    */
   useEffect(() => {
-    const winner = checkWinner(gameState)
-    const elem = document.querySelector('.status') as HTMLElement
-
-    if (winner) {
-      elem.innerHTML = '<h2>Winner! ' + winner + '</h2>'
-      setIsWinner(true)
-    }
-
     //reset board state to the last set of history sets
     setGameState(gameHistory[gameHistory.length - 1])
   })
 
   return (
     <div>
+      <div className="winner-title">
+        <h2>{isWinner ? 'Winner! ' + gameState[winningSquares[0]] : ''}</h2>
+      </div>
       <div className="reset">
         <button
           hidden={!isWinner ? true : false}
@@ -92,26 +86,39 @@ const Board = ({
       <div className="board">
         <div className="container">
           <div className="board-grid">
-            {
-              /* {createSquares(gameHistory[gameHistory.length - 1])} */
-              gameState.map((item, index) => {
-                return (
-                  <Square
-                    key={index}
-                    id={index}
-                    currentTurn={currentTurn}
-                    value={gameHistory[gameHistory.length - 1][index]}
-                    disabled={gameState[index] ? true : false}
-                    handleClick={onSquareClick}
-                  />
-                )
-              })
-            }
+            {gameState.map((squareValue, index) => {
+              return (
+                <Square
+                  key={index}
+                  id={index}
+                  currentTurn={currentTurn}
+                  value={squareValue}
+                  disabled={squareValue ? true : false}
+                  winningSquares={winningSquares}
+                  handleClick={onSquareClick}
+                />
+              )
+            })}
           </div>
         </div>
       </div>
     </div>
   )
+}
+
+/**
+ * Check for a winner on each click
+ * @param board
+ */
+const checkWinner = (board: string[]) => {
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i]
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      //return set of winning square ids
+      return lines[i]
+    }
+  }
+  return false
 }
 
 export default Board

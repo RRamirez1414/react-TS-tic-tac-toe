@@ -12,6 +12,7 @@ type SquareProps = {
   currentTurn: string
   value: string
   disabled?: boolean
+  winningSquares: number[]
   handleClick: (id: number, value: string) => void
 }
 

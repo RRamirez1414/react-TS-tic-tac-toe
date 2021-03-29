@@ -1,5 +1,5 @@
 //covers winning sets of tiles
-const lines = [
+const winningConditions = [
     [0, 1, 2],
     [3, 4, 5],
     [6, 7, 8],
@@ -10,4 +10,4 @@ const lines = [
     [2, 4, 6]
 ]
 
-export default lines;
+export default winningConditions;

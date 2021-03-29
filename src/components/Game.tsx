@@ -2,20 +2,18 @@ import React, { useState } from 'react'
 import Board from './Board'
 
 //component
-const Game: React.FC = () => {
+const Game = () => {
   const initialBoard = ['', '', '', '', '', '', '', '', '']
-  const [history, setHistory] = useState<string[][]>([initialBoard])
+  const [gameHistory, setGameHistory] = useState<GameState[]>([initialBoard])
   const [isXNext, setIsXNext] = useState<boolean>(true)
-  const status = 'Next Player: ' + (isXNext ? 'X' : 'O')
 
   /**
    * based on the range value, sets the game to history[n]
-   * @param n
+   * @param historyIndex
    */
-  function jumpTo(n: number) {
-    setIsXNext(n % 2 === 0)
-    const newHist = history.slice(0, n + 1)
-    setHistory(newHist)
+  const jumpToGameHistory = (historyIndex: number) => {
+    setIsXNext(historyIndex % 2 === 0)
+    setGameHistory(gameHistory.slice(0, historyIndex + 1))
   }
 
   /**
@@ -23,36 +21,34 @@ const Game: React.FC = () => {
    * adds current board state to history[] state
    * @param squares
    */
-  function update(squares: string[]) {
-    const updatedHist = [...history, squares]
-    setHistory(updatedHist)
+  const addGameHistory = (squares: string[]) => {
+    setGameHistory([...gameHistory, squares])
     setIsXNext(!isXNext)
   }
 
   return (
     <div>
       <div className="status">
-        <h2>{status}</h2>
+        <h2>{'Next Player: ' + (isXNext ? 'X' : 'O')}</h2>
       </div>
-      <div className="slider">
+      <div className="slider-container">
         <input
           type="range"
           min={0}
           max={9}
-          value={history.length - 1}
+          value={gameHistory.length - 1}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
-            jumpTo(parseInt(ev.target.value))
+            jumpToGameHistory(parseInt(ev.target.value))
           }}
         ></input>
       </div>
       <Board
-        squares={history}
-        updateHistory={update}
-        currTurn={isXNext ? 'X' : 'O'}
+        gameHistory={gameHistory}
+        addGameHistory={addGameHistory}
+        currentTurn={isXNext ? 'X' : 'O'}
       />
     </div>
   )
 }
 
 export default Game
-//branch test

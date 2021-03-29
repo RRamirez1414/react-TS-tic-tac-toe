@@ -4,7 +4,7 @@ import Game from './components/Game'
 function App() {
   return (
     <div>
-      <h1 className="title">Tic Tac Toe</h1>
+      <h1 className="page-header">Tic Tac Toe</h1>
       <Game />
     </div>
   )

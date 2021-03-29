@@ -24,7 +24,7 @@ code {
     monospace;
 }
 
-.title {
+.page-header {
   text-align: center;
 }
 
@@ -33,13 +33,13 @@ code {
   text-align: center;
 }
 
-.slider {
+.slider-container {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-.slider input {
-  width: 30%;
+.slider-container input {
+  width: 381px;
 }
 
 .reset {

@@ -107,7 +107,6 @@ const Board = ({
         <h2>{isStale ? 'Tied!' : ''}</h2>
       </div>
       <Restart render={isWinner || isStale} restart={restart} />
-
       <div className="confetti-container">
         <Confetti active={isWinner} config={confettiConfig} />
       </div>

@@ -12,9 +12,14 @@ const Game = () => {
    * adds current board state to history[] state
    * @param squares
    */
-  const addGameHistory = (squares: string[]) => {
-    setGameHistory([...gameHistory, squares])
+  const addGameHistory = (squares: string[], sliderValue: number) => {
     setIsXNext(!isXNext)
+    /**
+     * clear the rest of history if the current game state is at a
+     * previous state in history
+     */
+    //  setGameHistory([...gameHistory, squares])
+    setGameHistory([...gameHistory.slice(0, sliderValue + 1), squares])
   }
 
   return (

@@ -19,6 +19,6 @@ type SquareProps = {
 //Board props
 type BoardTypeProps = {
   gameHistory: GameState[]
-  addGameHistory: (squares: GameState) => void
+  addGameHistory: (squares: GameState, sliderValue: number) => void
   currentTurn: string
 }

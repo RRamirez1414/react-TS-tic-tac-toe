@@ -46,7 +46,10 @@ const Board = ({
     const possibleWinningSquares = checkWinner(newGameState)
 
     setGameState(newGameState)
-    addGameHistory(newGameState)
+    addGameHistory(newGameState, sliderValue)
+    setSliderValue((previousValue) => {
+      return previousValue + 1
+    })
 
     if (possibleWinningSquares) {
       setWinningSquares(possibleWinningSquares)
@@ -65,6 +68,7 @@ const Board = ({
     setGameState(gameHistory[0])
     setIsWinner(false)
     setWinningSquares([])
+    setSliderValue(0)
   }
 
   /**
@@ -87,7 +91,7 @@ const Board = ({
           min={0}
           max={gameHistory.length - 1}
           step={1}
-          value={sliderValue} //reduntant, must dynamically go up based on history length
+          value={sliderValue}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
             const sliderValue = parseInt(ev.target.value)
             setSliderValue(sliderValue)

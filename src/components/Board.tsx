@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Square from './Square'
-import lines from '../utils/winningConditions'
+import { checkWinner } from '../utils'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
 
@@ -13,6 +13,7 @@ const Board = ({
   const [gameState, setGameState] = useState<GameState>(gameHistory[0])
   const [isWinner, setIsWinner] = useState<boolean>(false)
   const [winningSquares, setWinningSquares] = useState<number[]>([])
+  const [sliderValue, setSliderValue] = useState<number>(0)
 
   /**
    *
@@ -57,15 +58,45 @@ const Board = ({
   }
 
   /**
-   * handle checking for winner after each board re-render
+   * reset some states when restart button is clicked
+   * TODO: move this function to onClick inline?
    */
-  useEffect(() => {
-    //reset board state to the last set of history sets
-    setGameState(gameHistory[gameHistory.length - 1])
-  })
+  const restart = () => {
+    setGameState(gameHistory[0])
+    setIsWinner(false)
+    setWinningSquares([])
+  }
+
+  /**
+   * based on the range value, sets the game to history[n]
+   * @param historyIndex
+   */
+  const jumpToGameHistory = (historyIndex: number) => {
+    setGameState(gameHistory[historyIndex])
+  }
 
   return (
     <div>
+      <div className="slider-container">
+        {/**
+         * TODO: fix range input so that the current value goes up
+         * as you make moves but can slide up and down
+         */}
+        <input
+          type="range"
+          min={0}
+          max={gameHistory.length - 1}
+          step={1}
+          value={sliderValue} //reduntant, must dynamically go up based on history length
+          onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
+            const sliderValue = parseInt(ev.target.value)
+            setSliderValue(sliderValue)
+            jumpToGameHistory(sliderValue)
+            setWinningSquares([])
+            setIsWinner(false)
+          }}
+        ></input>
+      </div>
       <div className="winner-title">
         <h2>{isWinner ? 'Winner! ' + gameState[winningSquares[0]] : ''}</h2>
       </div>
@@ -74,7 +105,7 @@ const Board = ({
           hidden={!isWinner ? true : false}
           disabled={!isWinner}
           onClick={(): void => {
-            window.location.reload()
+            restart()
           }}
         >
           Restart?
@@ -94,7 +125,7 @@ const Board = ({
                   currentTurn={currentTurn}
                   value={squareValue}
                   disabled={squareValue ? true : false}
-                  winningSquares={winningSquares}
+                  winningSquares={isWinner ? winningSquares : []}
                   handleClick={onSquareClick}
                 />
               )
@@ -104,21 +135,6 @@ const Board = ({
       </div>
     </div>
   )
-}
-
-/**
- * Check for a winner on each click
- * @param board
- */
-const checkWinner = (board: string[]) => {
-  for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i]
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      //return set of winning square ids
-      return lines[i]
-    }
-  }
-  return false
 }
 
 export default Board

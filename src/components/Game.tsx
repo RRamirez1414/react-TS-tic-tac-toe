@@ -8,15 +8,6 @@ const Game = () => {
   const [isXNext, setIsXNext] = useState<boolean>(true)
 
   /**
-   * based on the range value, sets the game to history[n]
-   * @param historyIndex
-   */
-  const jumpToGameHistory = (historyIndex: number) => {
-    setIsXNext(historyIndex % 2 === 0)
-    setGameHistory(gameHistory.slice(0, historyIndex + 1))
-  }
-
-  /**
    * pointer function for handling click events from square component
    * adds current board state to history[] state
    * @param squares
@@ -30,17 +21,6 @@ const Game = () => {
     <div>
       <div className="status">
         <h2>{'Next Player: ' + (isXNext ? 'X' : 'O')}</h2>
-      </div>
-      <div className="slider-container">
-        <input
-          type="range"
-          min={0}
-          max={9}
-          value={gameHistory.length - 1}
-          onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
-            jumpToGameHistory(parseInt(ev.target.value))
-          }}
-        ></input>
       </div>
       <Board
         gameHistory={gameHistory}

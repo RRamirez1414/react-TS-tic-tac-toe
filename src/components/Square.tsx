@@ -20,6 +20,10 @@ const Square = ({
     winningSquares.forEach((winningSquareId) => {
       if (id === winningSquareId) setIsWinningSquare(true)
     })
+
+    if (winningSquares.length < 3) {
+      setIsWinningSquare(false)
+    }
   }
 
   useEffect(() => {
@@ -37,9 +41,8 @@ const Square = ({
           : 'rgba(0, 0, 0, 0)',
       }}
       onClick={() => {
-        const currValue = currentTurn
-        setValue(currValue)
-        handleClick(id, currValue)
+        setValue(currentTurn)
+        handleClick(id, currentTurn)
       }}
       disabled={disabled}
     >

@@ -16,9 +16,8 @@ const Game = () => {
     setIsXNext(!isXNext)
     /**
      * clear the rest of history if the current game state is at a
-     * previous state in history
+     * previous state in history and a new move is made
      */
-    //  setGameHistory([...gameHistory, squares])
     setGameHistory([...gameHistory.slice(0, sliderValue + 1), squares])
   }
 

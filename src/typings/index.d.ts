@@ -22,3 +22,9 @@ type BoardTypeProps = {
   addGameHistory: (squares: GameState, sliderValue: number) => void
   currentTurn: string
 }
+
+//Restart props
+type RestartProps = {
+  render: boolean
+  restart: () => void
+}

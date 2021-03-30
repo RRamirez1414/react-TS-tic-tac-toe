@@ -14,3 +14,16 @@ export const checkWinner = (board: string[]) => {
   }
   return false
 }
+
+/**
+ * Check if the board has been filled but there is no winner
+ * @param board
+ */
+export const checkStale = (board: string[]) => {
+  for (let i = 0; i < board.length; i++) {
+    if (board[i] === '') {
+      return false
+    }
+  }
+  return true
+}

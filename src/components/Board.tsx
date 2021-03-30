@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Square from './Square'
-import { checkWinner } from '../utils'
+import { checkWinner, checkStale } from '../utils'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
+import Restart from './Restart'
 
 //component, destructured props of type BoardTypeProps
 const Board = ({
@@ -12,6 +13,7 @@ const Board = ({
 }: BoardTypeProps) => {
   const [gameState, setGameState] = useState<GameState>(gameHistory[0])
   const [isWinner, setIsWinner] = useState<boolean>(false)
+  const [isStale, setIsStale] = useState<boolean>(false)
   const [winningSquares, setWinningSquares] = useState<number[]>([])
   const [sliderValue, setSliderValue] = useState<number>(0)
 
@@ -61,8 +63,15 @@ const Board = ({
   }
 
   /**
-   * reset some states when restart button is clicked
-   * TODO: move this function to onClick inline?
+   * based on the range value, sets the game to history[n]
+   * @param historyIndex
+   */
+  const jumpToGameHistory = (historyIndex: number) => {
+    setGameState(gameHistory[historyIndex])
+  }
+
+  /**
+   * reset several states
    */
   const restart = () => {
     setGameState(gameHistory[0])
@@ -71,21 +80,13 @@ const Board = ({
     setSliderValue(0)
   }
 
-  /**
-   * based on the range value, sets the game to history[n]
-   * @param historyIndex
-   */
-  const jumpToGameHistory = (historyIndex: number) => {
-    setGameState(gameHistory[historyIndex])
-  }
+  useEffect(() => {
+    setIsStale(checkStale(gameState) && !isWinner)
+  })
 
   return (
     <div>
       <div className="slider-container">
-        {/**
-         * TODO: fix range input so that the current value goes up
-         * as you make moves but can slide up and down
-         */}
         <input
           type="range"
           min={0}
@@ -103,18 +104,10 @@ const Board = ({
       </div>
       <div className="winner-title">
         <h2>{isWinner ? 'Winner! ' + gameState[winningSquares[0]] : ''}</h2>
+        <h2>{isStale ? 'Tied!' : ''}</h2>
       </div>
-      <div className="reset">
-        <button
-          hidden={!isWinner ? true : false}
-          disabled={!isWinner}
-          onClick={(): void => {
-            restart()
-          }}
-        >
-          Restart?
-        </button>
-      </div>
+      <Restart render={isWinner || isStale} restart={restart} />
+
       <div className="confetti-container">
         <Confetti active={isWinner} config={confettiConfig} />
       </div>

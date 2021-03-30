@@ -1,2 +1,5 @@
-export * from './winningConditions'
-export * from './checkWinner'
+import checkStale from './checkStale'
+import checkWinner from './checkWinner'
+import checkIsWinningSquare from './checkIsWinnnigSquare'
+
+export { checkStale, checkWinner, checkIsWinningSquare }

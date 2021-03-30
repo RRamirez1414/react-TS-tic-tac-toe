@@ -1,42 +1,36 @@
 import React, { useState, useEffect } from 'react'
 
+//Square props
+type SquareProps = {
+  id: number
+  currentTurn: string
+  value: string
+  disabled?: boolean
+  isHighlighted: boolean
+  handleClick: (id: number, value: string) => void
+}
+
 //component
 const Square = ({
   id,
   currentTurn,
   value,
   disabled,
-  winningSquares,
+  isHighlighted,
   handleClick,
 }: SquareProps) => {
   const [stateValue, setValue] = useState<string>('')
-  const [isWinningSquare, setIsWinningSquare] = useState<boolean>(false)
-
-  /**
-   * function for checking if 'this' square is part of the set of
-   * winning squares, sets the state to true if it is
-   */
-  const checkIsWinningSquare = () => {
-    winningSquares.forEach((winningSquareId) => {
-      if (id === winningSquareId) setIsWinningSquare(true)
-    })
-
-    if (winningSquares.length < 3) {
-      setIsWinningSquare(false)
-    }
-  }
 
   useEffect(() => {
     setValue(value)
-    checkIsWinningSquare()
-  })
+  }, [value])
 
   return (
     <button
       id={id.toString()}
       className="square"
       style={{
-        backgroundColor: isWinningSquare
+        backgroundColor: isHighlighted
           ? 'rgba(18, 194, 233, 1)'
           : 'rgba(0, 0, 0, 0)',
       }}

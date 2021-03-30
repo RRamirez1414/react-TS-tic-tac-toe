@@ -120,7 +120,7 @@ const Board = ({
                   id={index}
                   currentTurn={currentTurn}
                   value={squareValue}
-                  disabled={squareValue ? true : false}
+                  disabled={(squareValue ? true : false) || isWinner}
                   winningSquares={isWinner ? winningSquares : []}
                   handleClick={onSquareClick}
                 />

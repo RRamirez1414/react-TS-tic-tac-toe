@@ -98,7 +98,12 @@ code {
 }
 
 .square:hover {
+<<<<<<< Updated upstream
   background-color: rgba(255, 255, 255, 0.3);
+=======
+  /* override inline style when hovering */
+  background-color: rgba(255, 255, 255, 0.3) !important;
+>>>>>>> Stashed changes
 }
 
 .confetti-container {

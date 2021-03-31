@@ -9,9 +9,22 @@ type BoardState = string[]
 //type for state of the game
 type GameState = {
   currentBoardState: BoardState
+  sliderValue: number
   isWon: boolean
   isTied: boolean
   isXNext: boolean
   winningSquareSet: number[]
-  sliderValue: number
+  gameHistory: BoardState[]
+}
+
+//types for useReducer
+type Action = {
+  type: string
+  newGameState: GameState
+}
+
+//types for useContext
+type GameStateContext = {
+  gameState: GameState
+  stateDispatch: React.Dispatch<Action>
 }

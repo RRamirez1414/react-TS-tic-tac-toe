@@ -1,143 +1,37 @@
-import React, { useEffect, useState, useReducer } from 'react'
+import React, { useEffect, useContext } from 'react'
 import Square from './Square'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
-import {
-  checkWinner,
-  checkIsTied,
-  checkIsHighlightedSquare,
-  updateBoardState,
-  gameStateReducer,
-} from 'utils'
-
-//Board props
-type BoardTypeProps = {
-  gameHistory: BoardState[]
-  addGameHistory: (squares: BoardState, sliderValue: number) => void
-}
+import { GameStateContext } from './Game'
+import { checkWinner, checkIsTied, checkIsHighlightedSquare } from 'utils'
 
 //component, destructured props of type BoardTypeProps
-const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
-  /**
-   * TODO: for testing purposes, remove later
-   */
-  // const copyGameState = {
-  //   currentBoardState: ['', '', '', '', 'X', '', '', 'O', ''],
-  //   isWon: true,
-  //   isTied: false,
-  //   isXNext: true,
-  //   winningSquareSet: [0, 1, 2],
-  //   sliderValue: 5,
-  // }
-  // const [tempGameState, dispatch] = useReducer(gameStateReducer, copyGameState)
-
-  /**
-   * TODO2: use useReducer to manage the object
-   */
-  const [gameState, setBoardState] = useState<GameState>({
-    currentBoardState: gameHistory[0],
-    isWon: false,
-    isTied: false,
-    isXNext: true,
-    winningSquareSet: [],
-    sliderValue: 0,
-  })
-
-  /**
-   * Handles updating the sate of the board string array
-   * given a value from a square component
-   * @param id
-   * @param value
-   */
-  const onSquareClick = (id: number, value: string) => {
-    const newGameState = updateBoardState(
-      gameState.currentBoardState,
-      id,
-      value
-    )
-
-    setBoardState((prevGameState) => {
-      return {
-        ...prevGameState,
-        currentBoardState: newGameState,
-        isXNext: gameHistory.length % 2 === 0,
-        sliderValue: prevGameState.sliderValue + 1,
-      }
-    })
-
-    addGameHistory(newGameState, gameState.sliderValue)
-  }
-
-  /**
-   * based on the range value, sets the game to history[n]
-   * @param historyIndex
-   */
-  const jumpToGameHistory = (historyIndex: number) => {
-    setBoardState((prevGameState) => {
-      return { ...prevGameState, currentBoardState: gameHistory[historyIndex] }
-    })
-  }
-
-  /**
-   * reset several states
-   */
-  const restart = () => {
-    /**
-     * Test useReducer first with restart function
-     * expected outcome: object values will be reset to initial
-     */
-    dispatch('restart')
-    //look at components debugger, tempGameState has changed, congrats!
-
-    //reset game
-    setBoardState((prevGameState) => {
-      return {
-        ...prevGameState,
-        currentBoardState: gameHistory[0],
-        isWon: false,
-        isTied: false,
-        winningSquareSet: [],
-        sliderValue: 0,
-      }
-    })
-  }
+const Board = () => {
+  const { gameState, stateDispatch } = useContext(GameStateContext)
 
   useEffect(() => {
     const isWinningSquareSet = checkWinner(gameState.currentBoardState)
 
     if (isWinningSquareSet) {
       //one player won
-      setBoardState((prevGameState) => {
-        return {
-          ...prevGameState,
-          isWon: true,
-          winningSquareSet: isWinningSquareSet,
-        }
+      stateDispatch({
+        type: 'PLAYER_WON',
+        newGameState: { ...gameState, winningSquareSet: isWinningSquareSet },
       })
     } else if (checkIsTied(gameState.currentBoardState) && !gameState.isWon) {
       //no one won, tied
-      setBoardState((prevBoardState) => {
-        return { ...prevBoardState, isWon: false, isTied: true }
-      })
+      stateDispatch({ type: 'TIE', newGameState: gameState })
     } else {
       //in progress game
-      setBoardState((prevBoardState) => {
-        return {
-          ...prevBoardState,
-          isWon: false,
-          isTied: false,
+      stateDispatch({
+        type: 'IN_PROGRESS',
+        newGameState: {
+          ...gameState,
           isXNext: gameState.sliderValue % 2 === 0,
-          winningSquareSet: [],
-        }
+        },
       })
     }
-  }, [
-    gameState.currentBoardState,
-    gameState.isWon,
-    gameState.isTied,
-    gameState.isXNext,
-    gameState.sliderValue,
-  ])
+  }, [gameState.currentBoardState, gameState.isXNext, gameState.sliderValue])
 
   return (
     <div>
@@ -153,19 +47,23 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
         <input
           type="range"
           min={0}
-          max={gameHistory.length - 1}
+          max={gameState.gameHistory.length - 1}
           step={1}
           value={gameState.sliderValue}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
             const sliderValue = parseInt(ev.target.value)
-            jumpToGameHistory(sliderValue)
-            //set isWon to false
-            setBoardState((prevBoardState) => {
-              return {
-                ...prevBoardState,
-                isWon: false,
+            stateDispatch({
+              type: 'SET_SLIDER_VALUE',
+              newGameState: {
+                ...gameState,
                 sliderValue: sliderValue,
-              }
+              },
+            })
+            stateDispatch({
+              type: 'JUMPTOHISTORY',
+              newGameState: {
+                ...gameState,
+              },
             })
           }}
         ></input>
@@ -183,7 +81,7 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
         <button
           hidden={!(gameState.isTied || gameState.isWon)}
           onClick={(): void => {
-            restart()
+            stateDispatch({ type: 'RESTART', newGameState: gameState })
           }}
         >
           Restart?
@@ -207,7 +105,6 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
                     gameState.winningSquareSet,
                     index
                   )}
-                  onSquareClick={onSquareClick}
                 />
               )
             })}

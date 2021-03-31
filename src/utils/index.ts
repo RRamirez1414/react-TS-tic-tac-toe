@@ -1,5 +1,6 @@
-import checkStale from './checkStale'
+import checkIsTied from './checkIsTied'
 import checkWinner from './checkWinner'
-import checkIsWinningSquare from './checkIsWinnnigSquare'
+import checkIsHighlightedSquare from './checkIsWinnnigSquare'
+import updateBoardState from './updateBoardState'
 
-export { checkStale, checkWinner, checkIsWinningSquare }
+export { checkIsTied, checkWinner, checkIsHighlightedSquare, updateBoardState }

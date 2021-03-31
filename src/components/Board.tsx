@@ -1,49 +1,32 @@
 import React, { useEffect, useState } from 'react'
 import Square from './Square'
-import { checkWinner, checkStale } from '../utils'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
-import Restart from './Restart'
-import { checkIsWinningSquare } from '../utils'
+import {
+  checkWinner,
+  checkIsTied,
+  checkIsHighlightedSquare,
+  updateBoardState,
+} from 'utils'
 
 //Board props
 type BoardTypeProps = {
   gameHistory: GameState[]
   addGameHistory: (squares: GameState, sliderValue: number) => void
-  currentTurn: string
 }
 
 //component, destructured props of type BoardTypeProps
-const Board = ({
-  gameHistory,
-  addGameHistory,
-  currentTurn,
-}: BoardTypeProps) => {
+const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
+  /**
+   * TODO: make a gameState object object and use useReducer to manage it
+   * Q: can states be tracked/change in this object through useReducer?
+   */
   const [boardState, setBoardState] = useState<GameState>(gameHistory[0])
   const [isWinner, setIsWinner] = useState<boolean>(false)
-  const [isStale, setIsStale] = useState<boolean>(false)
+  const [isTied, setIsTied] = useState<boolean>(false)
   const [winningSquares, setWinningSquares] = useState<number[]>([])
   const [sliderValue, setSliderValue] = useState<number>(0)
-
-  /**
-   *
-   * @param gameState
-   * @param squareIndex
-   * @param newValue
-   * @returns
-   */
-  const updateBoardState = (
-    gameState: GameState,
-    squareIndex: number,
-    newValue: string
-  ) => {
-    const newGameState = gameState.map((square, index) => {
-      if (squareIndex === index) return newValue
-      return square
-    })
-
-    return newGameState
-  }
+  const [isXNext, setIsXNext] = useState<boolean>(true)
 
   /**
    * Handles updating the sate of the board string array
@@ -53,21 +36,13 @@ const Board = ({
    */
   const onSquareClick = (id: number, value: string) => {
     const newGameState = updateBoardState(boardState, id, value)
-    const possibleWinningSquares = checkWinner(newGameState)
 
     setBoardState(newGameState)
     addGameHistory(newGameState, sliderValue)
     setSliderValue((previousValue) => {
       return previousValue + 1
     })
-
-    if (possibleWinningSquares) {
-      setWinningSquares(possibleWinningSquares)
-      setIsWinner(true)
-    } else {
-      setWinningSquares([])
-      setIsWinner(false)
-    }
+    setIsXNext(gameHistory.length % 2 === 0)
   }
 
   /**
@@ -86,14 +61,36 @@ const Board = ({
     setIsWinner(false)
     setWinningSquares([])
     setSliderValue(0)
+    setIsTied(false)
   }
 
   useEffect(() => {
-    setIsStale(checkStale(boardState) && !isWinner)
-  })
+    const isGameWonSquares = checkWinner(boardState)
+    setIsXNext(sliderValue % 2 === 0)
+
+    if (isGameWonSquares) {
+      setWinningSquares(isGameWonSquares)
+      setIsWinner(true)
+    } else if (checkIsTied(boardState) && !isWinner) {
+      setIsTied(true)
+      setIsWinner(false)
+    } else {
+      setWinningSquares([])
+      setIsWinner(false)
+      setIsTied(false)
+    }
+  }, [boardState, isWinner, isTied, sliderValue])
 
   return (
     <div>
+      <div className="status">
+        <h2>{'Next Player: ' + (isXNext ? 'X' : 'O')}</h2>
+      </div>
+      {/**
+       * TODO: replace slider with button list
+       * make a container for these buttons that fits the width
+       * of the board
+       */}
       <div className="slider-container">
         <input
           type="range"
@@ -105,32 +102,43 @@ const Board = ({
             const sliderValue = parseInt(ev.target.value)
             setSliderValue(sliderValue)
             jumpToGameHistory(sliderValue)
-            setWinningSquares([])
             setIsWinner(false)
           }}
         ></input>
       </div>
       <div className="winner-title">
         <h2>{isWinner ? 'Winner! ' + boardState[winningSquares[0]] : ''}</h2>
-        <h2>{isStale ? 'Tied!' : ''}</h2>
+        <h2>{isTied && !isWinner ? 'Tied!' : ''}</h2>
       </div>
-      <Restart render={isWinner || isStale} restart={restart} />
+      <div className="reset">
+        <button
+          hidden={!(isTied || isWinner)}
+          onClick={(): void => {
+            restart()
+          }}
+        >
+          Restart?
+        </button>
+      </div>
       <div className="confetti-container">
         <Confetti active={isWinner} config={confettiConfig} />
       </div>
       <div className="board">
         <div className="container">
           <div className="board-grid">
-            {boardState.map((squareValue, index) => {
+            {boardState.map((squareLetter, index) => {
               return (
                 <Square
                   key={index}
                   id={index}
-                  currentTurn={currentTurn}
-                  value={squareValue}
-                  disabled={(squareValue ? true : false) || isWinner}
-                  isHighlighted={checkIsWinningSquare(winningSquares, index)}
-                  handleClick={onSquareClick}
+                  isXNext={isXNext}
+                  squareLetter={squareLetter}
+                  disabled={(squareLetter ? true : false) || isWinner}
+                  isHighlighted={checkIsHighlightedSquare(
+                    winningSquares,
+                    index
+                  )}
+                  onSquareClick={onSquareClick}
                 />
               )
             })}

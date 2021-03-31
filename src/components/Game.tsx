@@ -5,7 +5,6 @@ import Board from './Board'
 const Game = () => {
   const initialBoard = ['', '', '', '', '', '', '', '', '']
   const [gameHistory, setGameHistory] = useState<GameState[]>([initialBoard])
-  const [isXNext, setIsXNext] = useState<boolean>(true)
 
   /**
    * pointer function for handling click events from square component
@@ -13,7 +12,6 @@ const Game = () => {
    * @param squares
    */
   const addGameHistory = (squares: string[], sliderValue: number) => {
-    setIsXNext(!isXNext)
     /**
      * clear the rest of history if the current game state is at a
      * previous state in history and a new move is made
@@ -23,14 +21,7 @@ const Game = () => {
 
   return (
     <div>
-      <div className="status">
-        <h2>{'Next Player: ' + (isXNext ? 'X' : 'O')}</h2>
-      </div>
-      <Board
-        gameHistory={gameHistory}
-        addGameHistory={addGameHistory}
-        currentTurn={isXNext ? 'X' : 'O'}
-      />
+      <Board gameHistory={gameHistory} addGameHistory={addGameHistory} />
     </div>
   )
 }

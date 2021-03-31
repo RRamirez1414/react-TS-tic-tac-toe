@@ -2,16 +2,16 @@
  * function for checking if 'this' square is part of the set of
  * winning squares, sets the state to true if it is
  */
-const checkIsWinningSquare = (squares: number[], id: number) => {
-  let isWinningSquare = false
+const checkIsHighlightedSquare = (squares: number[], id: number) => {
+  let isHighlighted = false
   if (squares.length < 3) {
-    return isWinningSquare
+    return isHighlighted
   }
   squares.forEach((winningSquareId) => {
-    if (id === winningSquareId) isWinningSquare = true
+    if (id === winningSquareId) isHighlighted = true
   })
 
-  return isWinningSquare
+  return isHighlighted
 }
 
-export default checkIsWinningSquare
+export default checkIsHighlightedSquare

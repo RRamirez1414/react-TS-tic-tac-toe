@@ -9,7 +9,7 @@ type BoardState = string[]
 //type for state of the game
 type GameState = {
   currentBoardState: BoardState
-  sliderValue: number
+  buttonValue: number
   isWon: boolean
   isTied: boolean
   isXNext: boolean

@@ -7,7 +7,7 @@ const gameStateReducer = (state: GameState, action: Action) => {
     case 'RESTART':
       return {
         currentBoardState: initialBoard,
-        sliderValue: 0,
+        buttonValue: 0,
         isWon: false,
         isTied: false,
         isXNext: true,
@@ -19,14 +19,14 @@ const gameStateReducer = (state: GameState, action: Action) => {
       return {
         ...state,
         currentBoardState: newGameState.currentBoardState,
-        sliderValue: state.sliderValue + 1,
+        buttonValue: state.buttonValue + 1,
       }
 
     case 'ADD_HISTORY':
       return {
         ...state,
         gameHistory: [
-          ...state.gameHistory.slice(0, state.sliderValue),
+          ...state.gameHistory.slice(0, state.buttonValue),
           state.currentBoardState,
         ],
       }
@@ -37,19 +37,19 @@ const gameStateReducer = (state: GameState, action: Action) => {
         isXNext: state.gameHistory.length % 2 === 0,
       }
 
-    case 'SET_SLIDER_VALUE':
+    case 'SET_BUTTON_VALUE':
       return {
         ...state,
-        sliderValue: newGameState.sliderValue,
+        buttonValue: newGameState.buttonValue,
       }
 
-    case 'JUMPTOHISTORY': {
+    case 'JUMP_TO_HISTORY': {
       return {
         ...state,
         isWon: false,
         isTied: false,
         isXNext: newGameState.isXNext,
-        currentBoardState: state.gameHistory[state.sliderValue],
+        currentBoardState: state.gameHistory[state.buttonValue],
         winningSquareSet: [],
       }
     }

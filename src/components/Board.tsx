@@ -27,46 +27,39 @@ const Board = () => {
         type: 'IN_PROGRESS',
         newGameState: {
           ...gameState,
-          isXNext: gameState.sliderValue % 2 === 0,
+          isXNext: gameState.buttonValue % 2 === 0,
         },
       })
     }
-  }, [gameState.currentBoardState, gameState.isXNext, gameState.sliderValue])
+  }, [gameState.currentBoardState, gameState.isXNext, gameState.buttonValue])
 
   return (
     <div>
       <div className="status">
         <h2>{'Next Player: ' + (gameState.isXNext ? 'X' : 'O')}</h2>
       </div>
-      {/**
-       * TODO3: replace slider with button list
-       * make a container for these buttons that fits the width
-       * of the board
-       */}
-      <div className="slider-container">
-        <input
-          type="range"
-          min={0}
-          max={gameState.gameHistory.length - 1}
-          step={1}
-          value={gameState.sliderValue}
-          onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
-            const sliderValue = parseInt(ev.target.value)
-            stateDispatch({
-              type: 'SET_SLIDER_VALUE',
-              newGameState: {
-                ...gameState,
-                sliderValue: sliderValue,
-              },
-            })
-            stateDispatch({
-              type: 'JUMPTOHISTORY',
-              newGameState: {
-                ...gameState,
-              },
-            })
-          }}
-        ></input>
+      <div className="button-container">
+        {gameState.gameHistory.map((historySet, index) => {
+          if (index > 0)
+            return (
+              <button
+                key={index}
+                className="history-button"
+                onClick={() => {
+                  stateDispatch({
+                    type: 'SET_BUTTON_VALUE',
+                    newGameState: { ...gameState, buttonValue: index },
+                  })
+                  stateDispatch({
+                    type: 'JUMP_TO_HISTORY',
+                    newGameState: gameState,
+                  })
+                }}
+              >
+                {index}
+              </button>
+            )
+        })}
       </div>
       <div className="winner-title">
         <h2>

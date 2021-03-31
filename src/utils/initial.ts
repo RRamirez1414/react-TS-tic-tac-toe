@@ -2,7 +2,7 @@ const initialBoard: BoardState = ['', '', '', '', '', '', '', '', '']
 
 const initialState: GameState = {
   currentBoardState: initialBoard,
-  sliderValue: 0,
+  buttonValue: 0,
   isWon: false,
   isTied: false,
   isXNext: true,

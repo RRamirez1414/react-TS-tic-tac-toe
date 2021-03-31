@@ -6,11 +6,11 @@
  * @returns
  */
 const updateBoardState = (
-  gameState: GameState,
+  boardState: BoardState,
   squareIndex: number,
   newValue: string
 ) => {
-  const newGameState = gameState.map((square, index) => {
+  const newGameState = boardState.map((square, index) => {
     if (squareIndex === index) return newValue
     return square
   })

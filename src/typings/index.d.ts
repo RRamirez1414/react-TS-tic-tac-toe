@@ -3,5 +3,15 @@
  * available globally in this project
  */
 
-//state of the of grid, keeps track of what tiles have 'X' or 'O' values
-type GameState = string[]
+//type for state of the of grid, keeps track of what tiles have 'X' or 'O' values
+type BoardState = string[]
+
+//type for state of the game
+type GameState = {
+  currentBoardState: BoardState
+  isWon: boolean
+  isTied: boolean
+  isXNext: boolean
+  winningSquareSet: number[]
+  sliderValue: number
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useReducer } from 'react'
 import Square from './Square'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
@@ -7,26 +7,41 @@ import {
   checkIsTied,
   checkIsHighlightedSquare,
   updateBoardState,
+  gameStateReducer,
 } from 'utils'
 
 //Board props
 type BoardTypeProps = {
-  gameHistory: GameState[]
-  addGameHistory: (squares: GameState, sliderValue: number) => void
+  gameHistory: BoardState[]
+  addGameHistory: (squares: BoardState, sliderValue: number) => void
 }
 
 //component, destructured props of type BoardTypeProps
 const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
   /**
-   * TODO: make a gameState object object and use useReducer to manage it
-   * Q: can states be tracked/change in this object through useReducer?
+   * TODO: for testing purposes, remove later
    */
-  const [boardState, setBoardState] = useState<GameState>(gameHistory[0])
-  const [isWinner, setIsWinner] = useState<boolean>(false)
-  const [isTied, setIsTied] = useState<boolean>(false)
-  const [winningSquares, setWinningSquares] = useState<number[]>([])
-  const [sliderValue, setSliderValue] = useState<number>(0)
-  const [isXNext, setIsXNext] = useState<boolean>(true)
+  // const copyGameState = {
+  //   currentBoardState: ['', '', '', '', 'X', '', '', 'O', ''],
+  //   isWon: true,
+  //   isTied: false,
+  //   isXNext: true,
+  //   winningSquareSet: [0, 1, 2],
+  //   sliderValue: 5,
+  // }
+  // const [tempGameState, dispatch] = useReducer(gameStateReducer, copyGameState)
+
+  /**
+   * TODO2: use useReducer to manage the object
+   */
+  const [gameState, setBoardState] = useState<GameState>({
+    currentBoardState: gameHistory[0],
+    isWon: false,
+    isTied: false,
+    isXNext: true,
+    winningSquareSet: [],
+    sliderValue: 0,
+  })
 
   /**
    * Handles updating the sate of the board string array
@@ -35,14 +50,22 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
    * @param value
    */
   const onSquareClick = (id: number, value: string) => {
-    const newGameState = updateBoardState(boardState, id, value)
+    const newGameState = updateBoardState(
+      gameState.currentBoardState,
+      id,
+      value
+    )
 
-    setBoardState(newGameState)
-    addGameHistory(newGameState, sliderValue)
-    setSliderValue((previousValue) => {
-      return previousValue + 1
+    setBoardState((prevGameState) => {
+      return {
+        ...prevGameState,
+        currentBoardState: newGameState,
+        isXNext: gameHistory.length % 2 === 0,
+        sliderValue: prevGameState.sliderValue + 1,
+      }
     })
-    setIsXNext(gameHistory.length % 2 === 0)
+
+    addGameHistory(newGameState, gameState.sliderValue)
   }
 
   /**
@@ -50,44 +73,79 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
    * @param historyIndex
    */
   const jumpToGameHistory = (historyIndex: number) => {
-    setBoardState(gameHistory[historyIndex])
+    setBoardState((prevGameState) => {
+      return { ...prevGameState, currentBoardState: gameHistory[historyIndex] }
+    })
   }
 
   /**
    * reset several states
    */
   const restart = () => {
-    setBoardState(gameHistory[0])
-    setIsWinner(false)
-    setWinningSquares([])
-    setSliderValue(0)
-    setIsTied(false)
+    /**
+     * Test useReducer first with restart function
+     * expected outcome: object values will be reset to initial
+     */
+    dispatch('restart')
+    //look at components debugger, tempGameState has changed, congrats!
+
+    //reset game
+    setBoardState((prevGameState) => {
+      return {
+        ...prevGameState,
+        currentBoardState: gameHistory[0],
+        isWon: false,
+        isTied: false,
+        winningSquareSet: [],
+        sliderValue: 0,
+      }
+    })
   }
 
   useEffect(() => {
-    const isGameWonSquares = checkWinner(boardState)
-    setIsXNext(sliderValue % 2 === 0)
+    const isWinningSquareSet = checkWinner(gameState.currentBoardState)
 
-    if (isGameWonSquares) {
-      setWinningSquares(isGameWonSquares)
-      setIsWinner(true)
-    } else if (checkIsTied(boardState) && !isWinner) {
-      setIsTied(true)
-      setIsWinner(false)
+    if (isWinningSquareSet) {
+      //one player won
+      setBoardState((prevGameState) => {
+        return {
+          ...prevGameState,
+          isWon: true,
+          winningSquareSet: isWinningSquareSet,
+        }
+      })
+    } else if (checkIsTied(gameState.currentBoardState) && !gameState.isWon) {
+      //no one won, tied
+      setBoardState((prevBoardState) => {
+        return { ...prevBoardState, isWon: false, isTied: true }
+      })
     } else {
-      setWinningSquares([])
-      setIsWinner(false)
-      setIsTied(false)
+      //in progress game
+      setBoardState((prevBoardState) => {
+        return {
+          ...prevBoardState,
+          isWon: false,
+          isTied: false,
+          isXNext: gameState.sliderValue % 2 === 0,
+          winningSquareSet: [],
+        }
+      })
     }
-  }, [boardState, isWinner, isTied, sliderValue])
+  }, [
+    gameState.currentBoardState,
+    gameState.isWon,
+    gameState.isTied,
+    gameState.isXNext,
+    gameState.sliderValue,
+  ])
 
   return (
     <div>
       <div className="status">
-        <h2>{'Next Player: ' + (isXNext ? 'X' : 'O')}</h2>
+        <h2>{'Next Player: ' + (gameState.isXNext ? 'X' : 'O')}</h2>
       </div>
       {/**
-       * TODO: replace slider with button list
+       * TODO3: replace slider with button list
        * make a container for these buttons that fits the width
        * of the board
        */}
@@ -97,22 +155,33 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
           min={0}
           max={gameHistory.length - 1}
           step={1}
-          value={sliderValue}
+          value={gameState.sliderValue}
           onChange={(ev: React.ChangeEvent<HTMLInputElement>): void => {
             const sliderValue = parseInt(ev.target.value)
-            setSliderValue(sliderValue)
             jumpToGameHistory(sliderValue)
-            setIsWinner(false)
+            //set isWon to false
+            setBoardState((prevBoardState) => {
+              return {
+                ...prevBoardState,
+                isWon: false,
+                sliderValue: sliderValue,
+              }
+            })
           }}
         ></input>
       </div>
       <div className="winner-title">
-        <h2>{isWinner ? 'Winner! ' + boardState[winningSquares[0]] : ''}</h2>
-        <h2>{isTied && !isWinner ? 'Tied!' : ''}</h2>
+        <h2>
+          {gameState.isWon
+            ? 'Winner! ' +
+              gameState.currentBoardState[gameState.winningSquareSet[0]]
+            : ''}
+        </h2>
+        <h2>{gameState.isTied && !gameState.isWon ? 'Tied!' : ''}</h2>
       </div>
       <div className="reset">
         <button
-          hidden={!(isTied || isWinner)}
+          hidden={!(gameState.isTied || gameState.isWon)}
           onClick={(): void => {
             restart()
           }}
@@ -121,21 +190,21 @@ const Board = ({ gameHistory, addGameHistory }: BoardTypeProps) => {
         </button>
       </div>
       <div className="confetti-container">
-        <Confetti active={isWinner} config={confettiConfig} />
+        <Confetti active={gameState.isWon} config={confettiConfig} />
       </div>
       <div className="board">
         <div className="container">
           <div className="board-grid">
-            {boardState.map((squareLetter, index) => {
+            {gameState.currentBoardState.map((squareLetter, index) => {
               return (
                 <Square
                   key={index}
                   id={index}
-                  isXNext={isXNext}
+                  isXNext={gameState.isXNext}
                   squareLetter={squareLetter}
-                  disabled={(squareLetter ? true : false) || isWinner}
+                  disabled={(squareLetter ? true : false) || gameState.isWon}
                   isHighlighted={checkIsHighlightedSquare(
-                    winningSquares,
+                    gameState.winningSquareSet,
                     index
                   )}
                   onSquareClick={onSquareClick}

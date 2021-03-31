@@ -4,7 +4,7 @@ import Board from './Board'
 //component
 const Game = () => {
   const initialBoard = ['', '', '', '', '', '', '', '', '']
-  const [gameHistory, setGameHistory] = useState<GameState[]>([initialBoard])
+  const [gameHistory, setGameHistory] = useState<BoardState[]>([initialBoard])
 
   /**
    * pointer function for handling click events from square component

@@ -62,9 +62,8 @@ code {
   justify-content: center;
 }
 
-/* hide the first button without affecting the document flow */
-.button-container button:nth-child(1){
-  visibility: hidden;
+.button-container {
+  height: 25px;
 }
 
 .button-container {

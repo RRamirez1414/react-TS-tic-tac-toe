@@ -1,37 +1,27 @@
-import React, { useEffect, useContext } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import Square from './Square'
 import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
-import { GameStateContext } from './Game'
-import { checkWinner, checkIsTied, checkIsHighlightedSquare } from 'utils'
+import { gameStateReducer, initialState, checkWinner, checkIsTied, checkIsWinningSquare } from 'utils'
 
 //component, destructured props of type BoardTypeProps
 const Board = () => {
-  const { gameState, stateDispatch } = useContext(GameStateContext)
+  const [gameState, dispatch] = useReducer(gameStateReducer, initialState)
 
   useEffect(() => {
     const isWinningSquareSet = checkWinner(gameState.currentBoardState)
 
     if (isWinningSquareSet) {
       //one player won
-      stateDispatch({
+      dispatch({
         type: 'PLAYER_WON',
         newGameState: { ...gameState, winningSquareSet: isWinningSquareSet },
       })
     } else if (checkIsTied(gameState.currentBoardState) && !gameState.isWon) {
       //no one won, tied
-      stateDispatch({ type: 'TIE', newGameState: gameState })
-    } else {
-      //in progress game
-      stateDispatch({
-        type: 'IN_PROGRESS',
-        newGameState: {
-          ...gameState,
-          isXNext: gameState.buttonValue % 2 === 0,
-        },
-      })
-    }
-  }, [gameState.currentBoardState, gameState.isXNext, gameState.buttonValue])
+      dispatch({ type: 'TIE', newGameState: gameState })
+    } 
+  }, [gameState.currentBoardState])
 
   return (
     <div>
@@ -39,19 +29,15 @@ const Board = () => {
         <h2>{'Next Player: ' + (gameState.isXNext ? 'X' : 'O')}</h2>
       </div>
       <div className="button-container">
-        {gameState.gameHistory.map((historySet, index) => {
+        {gameState.gameHistory.filter((_, i) => i !== 0).map((_, index) => {
             return (
               <button
                 key={index}
                 className="history-button"
                 onClick={() => {
-                  stateDispatch({
-                    type: 'SET_BUTTON_VALUE',
-                    newGameState: { ...gameState, buttonValue: index },
-                  })
-                  stateDispatch({
+                  dispatch({
                     type: 'JUMP_TO_HISTORY',
-                    newGameState: gameState,
+                    newGameState: {...gameState, buttonValue: index}
                   })
                 }}
               >
@@ -73,7 +59,7 @@ const Board = () => {
         <button
           hidden={!(gameState.isTied || gameState.isWon)}
           onClick={(): void => {
-            stateDispatch({ type: 'RESTART', newGameState: gameState })
+            dispatch({ type: 'RESTART', newGameState: gameState })
           }}
         >
           Restart?
@@ -90,13 +76,13 @@ const Board = () => {
                 <Square
                   key={index}
                   id={index}
-                  isXNext={gameState.isXNext}
-                  squareLetter={squareLetter}
                   disabled={(squareLetter ? true : false) || gameState.isWon}
-                  isHighlighted={checkIsHighlightedSquare(
+                  isHighlighted={checkIsWinningSquare(
                     gameState.winningSquareSet,
                     index
                   )}
+                  gameState={gameState}
+                  dispatch={dispatch}
                 />
               )
             })}

@@ -10,7 +10,7 @@ const gameStateReducer = (state: GameState, action: Action) => {
         buttonValue: 0,
         isWon: false,
         isTied: false,
-        isXNext: true,
+        isXNext: false,
         winningSquareSet: [],
         gameHistory: [initialBoard],
       }
@@ -20,36 +20,21 @@ const gameStateReducer = (state: GameState, action: Action) => {
         ...state,
         currentBoardState: newGameState.currentBoardState,
         buttonValue: state.buttonValue + 1,
-      }
-
-    case 'ADD_HISTORY':
-      return {
-        ...state,
+        isXNext: newGameState.buttonValue % 2 === 0,
         gameHistory: [
-          ...state.gameHistory.slice(0, state.buttonValue),
-          state.currentBoardState,
+          ...state.gameHistory.slice(0, state.buttonValue + 1),
+          newGameState.currentBoardState,
         ],
-      }
-
-    case 'SET_NEXT':
-      return {
-        ...state,
-        isXNext: state.gameHistory.length % 2 === 0,
-      }
-
-    case 'SET_BUTTON_VALUE':
-      return {
-        ...state,
-        buttonValue: newGameState.buttonValue,
       }
 
     case 'JUMP_TO_HISTORY': {
       return {
         ...state,
+        buttonValue: newGameState.buttonValue,
+        isXNext: newGameState.buttonValue % 2 === 0,
         isWon: false,
         isTied: false,
-        isXNext: newGameState.isXNext,
-        currentBoardState: state.gameHistory[state.buttonValue],
+        currentBoardState: state.gameHistory[newGameState.buttonValue],
         winningSquareSet: [],
       }
     }
@@ -59,6 +44,7 @@ const gameStateReducer = (state: GameState, action: Action) => {
         ...state,
         isWon: true,
         isTied: false,
+        isXNext: newGameState.buttonValue % 2 === 0,
         winningSquareSet: newGameState.winningSquareSet,
       }
 
@@ -67,16 +53,12 @@ const gameStateReducer = (state: GameState, action: Action) => {
         ...state,
         isWon: false,
         isTied: true,
+        isXNext: newGameState.buttonValue % 2 === 0,
         winningSquareSet: [],
       }
 
-    case 'IN_PROGRESS':
-      return {
-        ...state,
-        isXNext: newGameState.isXNext,
-      }
     default:
-      console.log('cannot complete action ' + type)
+      throw new Error(`Action ${type} doesnt exist is gameStateReducer`)
       return state
   }
 }

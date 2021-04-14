@@ -5,7 +5,7 @@ const initialState: GameState = {
   buttonValue: 0,
   isWon: false,
   isTied: false,
-  isXNext: true,
+  isXNext: false,
   winningSquareSet: [],
   gameHistory: [initialBoard],
 }

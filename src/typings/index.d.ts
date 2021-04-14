@@ -19,12 +19,6 @@ type GameState = {
 
 //types for useReducer
 type Action = {
-  type: string
+  type: 'RESTART' | 'UPDATE_CURRENT_BOARD' | 'JUMP_TO_HISTORY' | 'PLAYER_WON' | 'TIE'
   newGameState: GameState
-}
-
-//types for useContext
-type GameStateContext = {
-  gameState: GameState
-  stateDispatch: React.Dispatch<Action>
 }

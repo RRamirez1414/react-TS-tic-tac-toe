@@ -1,24 +1,17 @@
-import React, { useContext, useEffect } from 'react'
-import { GameStateContext } from './Game'
+import React from 'react'
 import { updateBoardState } from 'utils'
 
 //Square props
 type SquareProps = {
   id: number
-  isXNext: boolean
-  squareLetter: string
   disabled?: boolean
   isHighlighted: boolean
+  gameState: GameState
+  dispatch: React.Dispatch<Action>
 }
 
 //component
-const Square = ({ id, isXNext, disabled, isHighlighted }: SquareProps) => {
-  const { gameState, stateDispatch } = useContext(GameStateContext)
-
-  //take care updating the game history update after render
-  useEffect(() => {
-    stateDispatch({ type: 'SET_NEXT', newGameState: gameState })
-  }, [gameState.currentBoardState])
+const Square = ({ id, disabled, isHighlighted, gameState, dispatch }: SquareProps) => {
 
   return (
     <button
@@ -30,19 +23,18 @@ const Square = ({ id, isXNext, disabled, isHighlighted }: SquareProps) => {
           : 'rgba(0, 0, 0, 0)',
       }}
       onClick={() => {
-        //dispatch to let useContext handle updating the board
-        stateDispatch({
+        //dispatch to let useReducer handle updating the board
+        dispatch({
           type: 'UPDATE_CURRENT_BOARD',
           newGameState: {
             ...gameState,
             currentBoardState: updateBoardState(
               gameState.currentBoardState,
               id,
-              isXNext ? 'X' : 'O'
+              gameState.isXNext ? 'X' : 'O'
             ),
           },
         })
-        stateDispatch({ type: 'ADD_HISTORY', newGameState: gameState })
       }}
       disabled={disabled}
     >

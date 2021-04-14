@@ -1,7 +1,6 @@
 import React from 'react'
 import { updateBoardState } from 'utils'
 
-//Square props
 type SquareProps = {
   id: number
   disabled?: boolean
@@ -10,7 +9,6 @@ type SquareProps = {
   dispatch: React.Dispatch<Action>
 }
 
-//component
 const Square = ({ id, disabled, isHighlighted, gameState, dispatch }: SquareProps) => {
 
   return (
@@ -24,6 +22,7 @@ const Square = ({ id, disabled, isHighlighted, gameState, dispatch }: SquareProp
       }}
       onClick={() => {
         //dispatch to let useReducer handle updating the board
+        const xoLiteral = gameState.buttonValue === 0 ? 'X' : (gameState.buttonValue % 2 === 0 ? 'X' : 'O')
         dispatch({
           type: 'UPDATE_CURRENT_BOARD',
           newGameState: {
@@ -31,8 +30,9 @@ const Square = ({ id, disabled, isHighlighted, gameState, dispatch }: SquareProp
             currentBoardState: updateBoardState(
               gameState.currentBoardState,
               id,
-              gameState.isXNext ? 'X' : 'O'
+              xoLiteral
             ),
+            buttonValue: gameState.buttonValue + 1
           },
         })
       }}

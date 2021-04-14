@@ -10,17 +10,17 @@ const gameStateReducer = (state: GameState, action: Action) => {
         buttonValue: 0,
         isWon: false,
         isTied: false,
-        isXNext: false,
         winningSquareSet: [],
         gameHistory: [initialBoard],
       }
 
     case 'UPDATE_CURRENT_BOARD':
-      return {
+      
+      
+    return {
         ...state,
         currentBoardState: newGameState.currentBoardState,
-        buttonValue: state.buttonValue + 1,
-        isXNext: newGameState.buttonValue % 2 === 0,
+        buttonValue: newGameState.buttonValue,
         gameHistory: [
           ...state.gameHistory.slice(0, state.buttonValue + 1),
           newGameState.currentBoardState,
@@ -28,10 +28,10 @@ const gameStateReducer = (state: GameState, action: Action) => {
       }
 
     case 'JUMP_TO_HISTORY': {
+      console.log('oldState: ' + state.buttonValue + " newState: " + newGameState.buttonValue );
       return {
         ...state,
         buttonValue: newGameState.buttonValue,
-        isXNext: (newGameState.buttonValue === 0 ? false : state.buttonValue % 2 === 0),
         isWon: false,
         isTied: false,
         currentBoardState: state.gameHistory[newGameState.buttonValue],
@@ -44,7 +44,6 @@ const gameStateReducer = (state: GameState, action: Action) => {
         ...state,
         isWon: true,
         isTied: false,
-        isXNext: newGameState.buttonValue % 2 === 0,
         winningSquareSet: newGameState.winningSquareSet,
       }
 
@@ -53,7 +52,6 @@ const gameStateReducer = (state: GameState, action: Action) => {
         ...state,
         isWon: false,
         isTied: true,
-        isXNext: newGameState.buttonValue % 2 === 0,
         winningSquareSet: [],
       }
 

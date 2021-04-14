@@ -1,6 +1,9 @@
 /**
  * function for checking if 'this' square is part of the set of
- * winning squares, sets the state to true if it is
+ * winning squares, returns true if it is
+ * @param squares 
+ * @param id 
+ * @returns boolean
  */
 const checkIsHighlightedSquare = (squares: number[], id: number) => {
   if (squares.length < 3) {

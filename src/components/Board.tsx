@@ -4,7 +4,6 @@ import Confetti from 'react-dom-confetti'
 import confettiConfig from './confetti-config'
 import { gameStateReducer, initialState, checkWinner, checkIsTied, checkIsWinningSquare } from 'utils'
 
-//component, destructured props of type BoardTypeProps
 const Board = () => {
   const [gameState, dispatch] = useReducer(gameStateReducer, initialState)
 
@@ -12,21 +11,20 @@ const Board = () => {
     const isWinningSquareSet = checkWinner(gameState.currentBoardState)
 
     if (isWinningSquareSet) {
-      //one player won
       dispatch({
         type: 'PLAYER_WON',
         newGameState: { ...gameState, winningSquareSet: isWinningSquareSet },
       })
     } else if (checkIsTied(gameState.currentBoardState) && !gameState.isWon) {
-      //no one won, tied
       dispatch({ type: 'TIE', newGameState: gameState })
     } 
+
   }, [gameState.currentBoardState])
 
   return (
     <div>
       <div className="status">
-        <h2>{'Next Player: ' + (gameState.isXNext ? 'X' : 'O')}</h2>
+        <h2>{'Next Player: ' + (gameState.buttonValue === 0 ? 'X' : (gameState.buttonValue % 2 === 0 ? 'X' : 'O'))}</h2>
       </div>
       <div className="button-container">
         {gameState.gameHistory.filter((_, i) => i !== 0).map((_, index) => {

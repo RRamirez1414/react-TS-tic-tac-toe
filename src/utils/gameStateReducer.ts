@@ -59,7 +59,6 @@ const gameStateReducer = (state: GameState, action: Action) => {
 
     default:
       throw new Error(`Action ${type} doesnt exist is gameStateReducer`)
-      return state
   }
 }
 

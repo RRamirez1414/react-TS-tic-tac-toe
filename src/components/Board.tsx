@@ -40,7 +40,6 @@ const Board = () => {
       </div>
       <div className="button-container">
         {gameState.gameHistory.map((historySet, index) => {
-          if (index > 0)
             return (
               <button
                 key={index}

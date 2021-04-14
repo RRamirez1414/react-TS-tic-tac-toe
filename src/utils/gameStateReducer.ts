@@ -31,7 +31,7 @@ const gameStateReducer = (state: GameState, action: Action) => {
       return {
         ...state,
         buttonValue: newGameState.buttonValue,
-        isXNext: newGameState.buttonValue % 2 === 0,
+        isXNext: (newGameState.buttonValue === 0 ? false : state.buttonValue % 2 === 0),
         isWon: false,
         isTied: false,
         currentBoardState: state.gameHistory[newGameState.buttonValue],

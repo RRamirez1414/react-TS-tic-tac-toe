@@ -39,7 +39,7 @@ const Board = () => {
                   })
                 }}
               >
-                {index}
+                {index + 1}
               </button>
             )
         })}

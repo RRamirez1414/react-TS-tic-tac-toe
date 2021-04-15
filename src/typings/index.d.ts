@@ -12,7 +12,6 @@ type GameState = {
   buttonValue: number
   isWon: boolean
   isTied: boolean
-  //isXNext: boolean
   winningSquareSet: number[]
   gameHistory: BoardState[]
 }

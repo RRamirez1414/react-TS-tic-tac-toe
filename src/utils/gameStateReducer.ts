@@ -15,9 +15,7 @@ const gameStateReducer = (state: GameState, action: Action) => {
       }
 
     case 'UPDATE_CURRENT_BOARD':
-      
-      
-    return {
+      return {
         ...state,
         currentBoardState: newGameState.currentBoardState,
         buttonValue: newGameState.buttonValue,
@@ -28,7 +26,6 @@ const gameStateReducer = (state: GameState, action: Action) => {
       }
 
     case 'JUMP_TO_HISTORY': {
-      console.log('oldState: ' + state.buttonValue + " newState: " + newGameState.buttonValue );
       return {
         ...state,
         buttonValue: newGameState.buttonValue,
